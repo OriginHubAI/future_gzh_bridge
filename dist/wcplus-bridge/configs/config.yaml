@@ -13,7 +13,7 @@ wcplus:
 # 使用本机 wechat_control-main 作为模拟采集器。
 simulator:
   enabled: true
-  store_file: "./data/simulator-store.json"
+  store_file: "./data/simulator-store.sqlite3"
   # The standalone wechat-control-main project is the only UI collector.
   # Set WECHAT_CONTROL_ROOT to its checkout on the Windows collector host.
   helper_command: "py"

@@ -17,9 +17,23 @@ Go + Gin 边车：与 **wcplusPro Max** 同机，按产品约定封装 **导入 
 
 ## 运行
 
-1. 启动 **wcplusPro**（`http://127.0.0.1:5001`），**Max 已激活**。
-2. `cp configs/config.example.yaml configs/config.yaml`
-3. `go run ./cmd/bridge -config configs/config.yaml`（Windows：`GOOS=windows GOARCH=amd64 go build -o bridge.exe ./cmd/bridge`）
+独立 `wechat_control` 模式不需要启动 wcplusPro Max。Windows 直接使用发布目录中的
+`bridge.exe` 和 `configs/config.windows.yaml`；macOS/Linux 可使用 `configs/config.yaml`。
+
+```powershell
+bridge.exe -config configs\config.windows.yaml
+```
+
+开发构建：
+
+```bash
+go run ./cmd/bridge -config configs/config.yaml
+# Windows: GOOS=windows GOARCH=amd64 go build -o bridge.exe ./cmd/bridge
+```
+
+文章库配置为 `simulator.store_file`。文件后缀为 `.sqlite3`、`.sqlite` 或 `.db` 时使用
+SQLite；使用 `.json` 时保留旧的 JSON 存储方式。首次切换到
+`data/simulator-store.sqlite3` 时，如果同目录存在 `data/simulator-store.json`，bridge 会自动迁移其中已有的公众号和文章。
 
 ## 对外 RPC（契约面）
 

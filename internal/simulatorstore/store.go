@@ -312,18 +312,26 @@ func (s *Store) AddArticleFrom(source, biz, nickname, link, title, image, conten
 }
 
 func (s *Store) addArticleSQLiteLocked(id, source, biz, link, title, image, content string, publishedAt int64) error {
-	if publishedAt <= 0 {
-		publishedAt = time.Now().Unix()
-	}
 	now := time.Now().UTC().Format(time.RFC3339Nano)
-	_, err := s.db.Exec(`INSERT INTO articles (id,biz,title,published_at,link,image,content,source,fetched_at)
-VALUES (?,?,?,?,?,?,?,?,?) ON CONFLICT(id) DO UPDATE SET
-title=CASE WHEN excluded.title <> '' THEN excluded.title ELSE articles.title END,
-published_at=CASE WHEN excluded.published_at > 0 THEN excluded.published_at ELSE articles.published_at END,
-image=CASE WHEN excluded.image <> '' THEN excluded.image ELSE articles.image END,
-content=CASE WHEN excluded.content <> '' THEN excluded.content ELSE articles.content END,
-source=CASE WHEN excluded.source <> '' THEN excluded.source ELSE articles.source END,
-fetched_at=excluded.fetched_at`, id, biz, title, publishedAt, link, image, content, source, now)
+	var exists int
+	err := s.db.QueryRow(`SELECT 1 FROM articles WHERE id=?`, id).Scan(&exists)
+	if errors.Is(err, sql.ErrNoRows) {
+		if publishedAt <= 0 {
+			publishedAt = time.Now().Unix()
+		}
+		_, err = s.db.Exec(`INSERT INTO articles (id,biz,title,published_at,link,image,content,source,fetched_at) VALUES (?,?,?,?,?,?,?,?,?)`, id, biz, title, publishedAt, link, image, content, source, now)
+		return err
+	}
+	if err != nil {
+		return err
+	}
+	_, err = s.db.Exec(`UPDATE articles SET
+title=CASE WHEN ? <> '' THEN ? ELSE title END,
+published_at=CASE WHEN ? > 0 THEN ? ELSE published_at END,
+image=CASE WHEN ? <> '' THEN ? ELSE image END,
+content=CASE WHEN ? <> '' THEN ? ELSE content END,
+source=CASE WHEN ? <> '' THEN ? ELSE source END,
+fetched_at=? WHERE id=?`, title, title, publishedAt, publishedAt, image, image, content, content, source, source, now, id)
 	return err
 }
 
