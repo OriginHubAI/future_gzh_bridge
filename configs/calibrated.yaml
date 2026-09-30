@@ -1,0 +1,10 @@
+# Generated from screenshot menu layout + live WeChat window 920x789.
+# Re-run calibrate_coordinates.py --mode menu for operator fine-tuning.
+simulator:
+  flow: "four_step"
+  link_mode: "menu"
+  vision: true
+  article_account_point: "165,195"
+  account_first_article_point: "460,265"
+  more_menu_point: "872,52"
+  copy_link_point: "810,108"

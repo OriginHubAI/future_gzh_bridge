@@ -1,0 +1,11 @@
+{
+  "mcpServers": {
+    "wcplus": {
+      "command": "D:\\wcplus-bridge\\wcplus-mcp.exe",
+      "env": {
+        "WCPLUS_BRIDGE_URL": "http://127.0.0.1:19090",
+        "WCPLUS_BRIDGE_AUTH_TOKEN": ""
+      }
+    }
+  }
+}

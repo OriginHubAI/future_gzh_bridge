@@ -1,0 +1,81 @@
+collector: wcplus
+# wcplus bridge — copy to config.yaml and adjust.
+
+listen: "127.0.0.1:19090"
+
+# 留空 = 本地不要求鉴权；生产环境请设置强随机 token，请求带 Authorization: Bearer <token>
+auth_token: ""
+
+wcplus:
+  base_url: "http://127.0.0.1:5001"
+  timeout_sec: 120
+
+# Vendor-independent Windows UI simulation. Disabled by default.
+# The helper reads one account JSON object from stdin and writes
+# {"ok":true,"articleLink":"https://..."} to stdout.
+simulator:
+  enabled: false
+  # bridge 自己的公众号文章库。Pro 导出成功时写入。
+  # 导出时优先读 Pro；Pro 失败则返回这份库，避免接口空掉。
+  # Use .json for the legacy file store, or .sqlite3 for SQLite.
+  store_file: "./data/simulator-store.sqlite3"
+  helper_command: "python"
+  helper_args: ["scripts/windows-simulator/wechat_control_adapter.py"]
+  state_file: "./data/latest-link-state.json"
+  max_accounts: 2000
+  default_retries: 1
+  account_timeout_sec: 90
+  retry_delay_ms: 500
+  # UI calibration is persisted here; WECHAT_SIM_* environment variables
+  # override these values when present. Points are relative to the outer
+  # target-window origin, in "x,y" form.
+  launch_command: ""
+  mac_app: ""
+  target_app: ""
+  window_title_regex: ""
+  # 四步主流程：真实文章链接 → 公众号 → 第一篇文章 → 复制链接
+  flow: "four_step"
+  reuse_current_article: false
+  require_menu_vision: false
+  require_article_vision: false
+  link_mode: "menu" # 原生微信：⋯→复制链接；浏览器可改为 direct
+  article_list_point: ""
+  first_article_point: ""
+  article_account_point: ""
+  account_first_article_point: ""
+  vision: false # 可选截图/颜色定位；失败时始终回退到相对坐标
+  article_pane_origin: ""
+  share_point: ""
+  more_menu_point: ""
+  copy_link_point: ""
+  wait_sec: 3
+  window_timeout_sec: 20
+  clipboard_timeout_sec: 3
+  close_hotkey: ""
+  address_hotkey: ""
+  copy_hotkey: ""
+  skip_article_nav: false
+  send_to_file_transfer: false
+  send_target_app: ""
+  send_window_title_regex: ""
+  file_transfer_chat_point: ""
+  file_transfer_input_point: ""
+  send_paste_hotkey: ""
+  send_hotkey: ""
+  send_window_timeout_sec: 0
+
+# ADP 通知：bridge POST 到业务侧提供的 URL（非 ADP 调 bridge 入站）.
+callback:
+  base_url: ""
+  token: ""
+  # all = 成功/失败 RPC 也 callback；manual_intervention = 仅采集需人工（推荐 ADP/FUT）
+  notify_mode: manual_intervention
+
+# Optional alert webhook (企业微信/飞书机器人等). Failures also POST to callback as alert.triggered.
+alert:
+  webhook_url: ""
+
+# Optional: notify callback when collector falls from ready -> not ready (e.g. WeChat logout).
+watchdog:
+  enabled: true
+  interval_sec: 120

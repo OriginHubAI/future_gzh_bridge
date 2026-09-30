@@ -1,0 +1,15 @@
+pyautogui>=0.9.54
+pyperclip>=1.8.2
+pywinauto>=0.6.8; sys_platform == "win32"
+pywin32>=306; sys_platform == "win32"
+opencv-python>=4.8
+numpy>=1.24
+Pillow>=10.0
+ImageHash>=4.3
+requests>=2.31
+beautifulsoup4>=4.12
+lxml>=4.9
+# Python 3.9 on macOS should use the last compatible universal2 wheel. Newer
+# Python versions can use the current PyObjC release.
+pyobjc-framework-Quartz>=10.0,<12.0; sys_platform == "darwin" and python_version < "3.10"
+pyobjc-framework-Quartz>=10.0; sys_platform == "darwin" and python_version >= "3.10"

@@ -1,0 +1,78 @@
+collector: wechat_control
+# Windows 包用的配置。在 bridge.exe 所在目录启动。
+# 四个点击坐标必须在这台 Windows 的微信文章窗口上重新录，不要填写 Mac 上的数字。
+
+listen: "0.0.0.0:19090"
+
+auth_token: ""
+
+wcplus:
+  base_url: "http://127.0.0.1:5001"
+  timeout_sec: 120
+
+# 使用本机 wechat_control-main 作为模拟采集器。
+simulator:
+  enabled: true
+  # SQLite article warehouse. The file is created next to the bridge data directory.
+  store_file: "./data/simulator-store.sqlite3"
+  # The standalone wechat-control-main project is the only UI collector.
+  # Set WECHAT_CONTROL_ROOT to its checkout on the Windows collector host.
+  helper_command: "py"
+  helper_args: ["scripts/windows-simulator/wechat_control_adapter.py"]
+  state_file: "./data/latest-link-state.json"
+  max_accounts: 2000
+  default_retries: 1
+  account_timeout_sec: 180
+  retry_delay_ms: 500
+  # 留空则用系统默认程序打开链接。不要写 Mac 的 open -a WeChat。
+  launch_command: ""
+  mac_app: ""
+  target_app: "微信"
+  window_title_regex: "微信.*"
+  flow: "four_step"
+  # Windows 微信不会把已打开的文章可靠地作为 URL 启动结果返回。
+  # 业务侧先在微信打开文章，helper 从当前文章继续执行后三步。
+  reuse_current_article: true
+  require_menu_vision: false
+  require_article_vision: false
+  link_mode: "menu"
+  article_list_point: ""
+  first_article_point: ""
+  # 2026-09-23 在 708x707 的 Windows 微信文章窗口实测的相对外框坐标。
+  article_account_point: "39,156"
+  account_first_article_point: "353,578"
+  # 这台机器已完成固定窗口校准，优先使用实测点，避免颜色误识别到刷新/问 AI 控件。
+  vision: false
+  article_pane_origin: ""
+  share_point: ""
+  more_menu_point: "403,28"
+  copy_link_point: "256,134"
+  coord_ref_size: "708,707"
+  click_driver: ""
+  wait_sec: 5
+  window_timeout_sec: 20
+  clipboard_timeout_sec: 12
+  close_hotkey: ""
+  address_hotkey: ""
+  copy_hotkey: ""
+  skip_article_nav: false
+  send_to_file_transfer: false
+  send_target_app: ""
+  send_window_title_regex: ""
+  file_transfer_chat_point: ""
+  file_transfer_input_point: ""
+  send_paste_hotkey: ""
+  send_hotkey: ""
+  send_window_timeout_sec: 0
+
+callback:
+  base_url: ""
+  token: ""
+  notify_mode: manual_intervention
+
+alert:
+  webhook_url: ""
+
+watchdog:
+  enabled: true
+  interval_sec: 120
